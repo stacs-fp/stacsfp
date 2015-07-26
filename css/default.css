@@ -49,17 +49,18 @@ a:hover {
     border-top: 4px solid #eee;
 }
 .navbar-default .navbar-nav > li > a:hover,
-.navbar-default .navbar-nav > li > a:focus,
-.navbar-default .navbar-nav > .active > a:hover,
-.navbar-default .navbar-nav > .active > a:focus {
+.navbar-default .navbar-nav > li > a:focus {
     background-color: #00539b;
     border-top: 4px solid #00539b;
     color: #fff;
 }
-.navbar-default .navbar-nav > .active > a {
-    background-color: #fff;
-    border-top: 4px solid #00539b;
-}
+.navbar-default .index        > #index        > a { border-top: 4px solid #00539b; }
+.navbar-default .introduction > #introduction > a { border-top: 4px solid #00539b; }
+.navbar-default .resources    > #resources    > a { border-top: 4px solid #00539b; }
+.navbar-default .people       > #people       > a { border-top: 4px solid #00539b; }
+.navbar-default .publications > #publications > a { border-top: 4px solid #00539b; }
+.navbar-default .projects     > #projects     > a { border-top: 4px solid #00539b; }
+.navbar-default .events       > #events       > a { border-top: 4px solid #00539b; }
 
 /* Navbar colors (collapsed) */
 .navbar-default .navbar-toggle {
@@ -326,8 +327,8 @@ footer .social-media a:hover {
 
 .person-avatar {
     margin-top: 30px;
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
     border-radius: 150px;
 }
 
