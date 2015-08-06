@@ -6,31 +6,43 @@ import Data.Foldable (for_)
 import Data.Maybe
 import Data.Monoid (mappend)
 import qualified Data.Map as M
+import Data.Traversable (for)
 import Hakyll
-import qualified Text.BibTeX.Entry as E
-import qualified Text.BibTeX.Format as F
+import qualified Text.BibTeX.Entry as BibEntry
+import qualified Text.BibTeX.Format as BibFormat
 import Text.BibTeX.Parse (file, skippingLeadingSpace )
 import Text.Parsec.String (parseFromFile)
 import System.Directory (createDirectoryIfMissing, doesFileExist, getDirectoryContents)
 import System.FilePath ((</>), (<.>), takeBaseName, takeExtension)
 import System.IO (hPutStrLn, stderr)
 
+bibEntryFilePath :: BibEntry.T -> FilePath
+bibEntryFilePath e = "bibtex" </> BibEntry.identifier e <.> "bib"
+
+writeBibs :: [BibEntry.T] -> IO ()
+writeBibs =
+  mapM_ $ \b -> do
+    p <- doesFileExist (bibEntryFilePath b)
+    unless p (writeFile (bibEntryFilePath b) (BibFormat.entry b))
+
+splitBibs :: IO [BibEntry.T]
+splitBibs = concat <$> do
+  fs <- filter ((== ".bib") . takeExtension) <$> getDirectoryContents "publications"
+  createDirectoryIfMissing True "bibtex"
+  for fs $ \f -> do
+    r <- parseFromFile (skippingLeadingSpace file) ("publications" </> f)
+    case r of
+      Left err -> do
+        hPutStrLn stderr ("Error processing file '" ++ f ++ "' (skipping): " ++ show err)
+        return []
+      Right bs -> do
+        writeBibs bs
+        return bs
+
 --------------------------------------------------------------------------------
 main :: IO ()
 main = hakyll $ do
-    preprocess $ do
-      fs <- filter ((== ".bib") . takeExtension) <$> getDirectoryContents "publications"
-      createDirectoryIfMissing True "bibtex"
-      for_ fs $ \f -> do
-        r <- parseFromFile (skippingLeadingSpace file) ("publications" </> f)
-        case r of
-          Left err ->
-            hPutStrLn stderr ("Error processing file '" ++ f ++ "' (skipping): " ++ show err)
-          Right bs ->
-            for_ bs $ \b -> do
-              let bibFile = "bibtex" </> E.identifier b <.> "bib"
-              p <- doesFileExist bibFile
-              unless p (writeFile bibFile (F.entry b))
+    preprocess splitBibs
 
     match ("js/*" .||.
            "lib/**/*" .||.
