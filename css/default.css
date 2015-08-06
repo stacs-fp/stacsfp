@@ -386,3 +386,12 @@ button:hover {
     -webkit-column-gap: 40px;
     -moz-column-gap: 40px;
 }
+
+.news .posts ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.news .posts ul li {
+    margin: 0 0 10px 0;
+}

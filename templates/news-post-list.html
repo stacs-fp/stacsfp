@@ -1,0 +1,24 @@
+<ul>
+  $for(newsposts)$
+   <li>
+     <div class="col-md-1 post-date">
+       $day$<br>$shortmonth$
+     </div>
+     
+     <div class="col-md-11 post-post">
+       <h2>$title$</h2>
+       $if(author)$
+         <p class="post-info">posted by $author$</p>
+       $endif$
+       <p>
+         $if(teaser)$
+           $teaser$
+         $else$
+           $body$
+         $endif$
+       </p>
+       <a href="$url$"><button>Read more</button></a>
+     </div>
+   </li>
+  $endfor$
+</ul>

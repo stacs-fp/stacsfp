@@ -81,23 +81,29 @@ main = hakyll $ do
 dateContext = dateField "date" "%B %e, %Y"
 
 standardContext :: Context String
-standardContext =
-  overrideTitle "title" `mappend`
-  titleField "active" `mappend`
-  postsField `mappend`
-  dateContext `mappend`
-  defaultContext
+standardContext = mconcat
+  [overrideTitle "title"
+  ,titleField "active"
+  ,newsPostsField
+  ,postsField
+  ,dateContext
+  ,defaultContext]
 
 thumbContext :: Context String
 thumbContext = field "thumb" $ \item ->
   return . fromMaybe "recent-post.png" .
                      M.lookup "thumb" =<< getMetadata (itemIdentifier item)
 
-postsField =
+newsPostsField = withPostsField "newsposts" recentFirst
+postsField = withPostsField "posts" (fmap (take 2) . recentFirst)
+
+withPostsField fld c =
   listField
-    "posts"
-    (dateContext `mappend` thumbContext `mappend` defaultContext)
-    (fmap (take 2) . recentFirst =<< loadAllSnapshots "posts/*" "content")
+    fld
+    (mconcat [dateField "day" "%d", dateField "shortmonth" "%b"
+             ,teaserField "teaser" "content"
+             ,dateContext, thumbContext, defaultContext])
+    (c =<< loadAllSnapshots "posts/*" "content")
 
 overrideTitle :: String -> Context String
 overrideTitle fld = do
