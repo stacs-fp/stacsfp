@@ -52,10 +52,13 @@ main = hakyll $ do
         loadAndApplyTemplate "templates/default.html" ctx >>=
         relativizeUrls
 
-    match "pages/*.html" $ do
-      route $ gsubRoute "pages/" (const "")
-      compile $
-        getResourceBody >>=
+    match "pages/*" $ do
+      let compiler id = if ".html" == takeExtension (toFilePath id)
+                           then getResourceBody
+                           else pandocCompiler
+      route $ gsubRoute "pages/" (const "") `composeRoutes`
+              setExtension "html"
+      compile $ getUnderlying >>= compiler >>=
         applyAsTemplate standardContext >>=
         loadAndApplyTemplate "templates/default.html" standardContext >>=
         relativizeUrls
