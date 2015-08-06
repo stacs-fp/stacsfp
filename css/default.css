@@ -60,7 +60,7 @@ a:hover {
 .navbar-default .people       > #people       > a { border-top: 4px solid #00539b; }
 .navbar-default .publications > #publications > a { border-top: 4px solid #00539b; }
 .navbar-default .projects     > #projects     > a { border-top: 4px solid #00539b; }
-.navbar-default .events       > #events       > a { border-top: 4px solid #00539b; }
+.navbar-default .news         > #news         > a { border-top: 4px solid #00539b; }
 
 /* Navbar colors (collapsed) */
 .navbar-default .navbar-toggle {
@@ -170,27 +170,10 @@ footer .social-media a:hover {
     font-size: 20pt;
 }
 
-.okbtn:hover {
-    color: #fff;
-    background-color: #50a3eb;
-    transition: 0.2s;
-
-    -o-transition: 0.2s;
-    -ms-transition: 0.2s;
-    -moz-transition: 0.2s;
-    -webkit-transition: 0.2s;
-}
-.btn {
-    color: #fff;
+.okbtn {
+    min-width: 38px;
     height: 38px;
     margin-left: -10px;
-    background-color: #1063ab;
-    transition: 0.2s;
-
-    -o-transition: 0.2s;
-    -ms-transition: 0.2s;
-    -moz-transition: 0.2s;
-    -webkit-transition: 0.2s;
 }
 .textbox {
     border-radius: 4px;
@@ -257,7 +240,7 @@ footer .social-media a:hover {
 }
 
 .content h2 {
-    font-size: 16pt;
+    font-size: 20pt;
     color: #000;
     /*color: #00539b;*/
 }
@@ -279,7 +262,7 @@ footer .social-media a:hover {
     margin-bottom: 27px;
 }
 
-.content .news button {
+button {
     border: 0;
     border-radius: 6px;
     text-align: center;
@@ -298,7 +281,7 @@ footer .social-media a:hover {
     -webkit-transition: 0.2s;
 }
 
-.content .news button:hover {
+button:hover {
     background-color: #0053fb;
     transition: 0.2s;
 
@@ -339,5 +322,67 @@ footer .social-media a:hover {
 
 .people p {
     padding-top: 18px;
-    color: #888;
+    color: #666;
+}
+
+.post-date {
+    padding-top: 20px;
+    text-align: right;
+    font-size: 16pt;
+    color: #666;
+}
+
+.post-post p {
+    color: #333;
+}
+
+.post-info {
+    color: #666;
+}
+
+.post-categories {
+    margin-left: 0;
+    padding-left: 0;
+    color: #666;
+    list-style-type: none;
+}
+
+.tags {
+    margin-left: 0;
+    padding-left: 0;
+    list-style-type: none;
+}
+
+.tags li {
+    color: #666;
+    display: inline-block;
+}
+
+.pub-years ul {
+    padding-left: 0;
+    margin-left: 0;
+    list-style-type: none;
+}
+.pub-years li {
+    padding-right: 8px;
+    display: inline-block;
+}
+
+.pub-actions {
+    text-align: right;
+    margin-left: 0;
+    padding-left: 0;
+    list-style-type: none;
+}
+
+.news .post-p {
+    margin-top: 20px;
+    column-count: 2;
+    column-gap: 20px;
+
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+
+    -webkit-column-gap: 40px;
+    -moz-column-gap: 40px;
 }

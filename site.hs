@@ -36,42 +36,53 @@ main = hakyll $ do
            "lib/**/*" .||.
            "images/**" .||.
            "bibtex/*") $ do
-        route idRoute
-        compile copyFileCompiler
+      route idRoute
+      compile copyFileCompiler
 
     match "css/*" $ do
-        route   idRoute
-        compile compressCssCompiler
+      route   idRoute
+      compile compressCssCompiler
+
+    match "posts/*" $ do
+      let ctx = constField "active" "news" `mappend` standardContext
+      route $ setExtension "html"
+      compile $ pandocCompiler >>=
+        loadAndApplyTemplate "templates/post.html" ctx >>=
+        saveSnapshot "content" >>=
+        loadAndApplyTemplate "templates/default.html" ctx >>=
+        relativizeUrls
 
     match "*.html" $ do
-        route idRoute
-        compile $
-            getResourceBody >>=
-            applyAsTemplate standardContext >>=
-            loadAndApplyTemplate "templates/default.html" standardContext >>=
-            relativizeUrls
+      route idRoute
+      compile $
+        getResourceBody >>=
+        applyAsTemplate standardContext >>=
+        loadAndApplyTemplate "templates/default.html" standardContext >>=
+        relativizeUrls
 
     match "templates/*" $ compile templateCompiler
 
 --------------------------------------------------------------------------------
+dateContext = dateField "date" "%B %e, %Y"
+
 standardContext :: Context String
 standardContext =
   overrideTitle "title" `mappend`
   titleField "active" `mappend`
-  dateField "date" "%B %e, %Y" `mappend`
   postsField `mappend`
+  dateContext `mappend`
   defaultContext
 
-postsField :: Context String
+thumbContext :: Context String
+thumbContext = field "thumb" $ \item ->
+  return . fromMaybe "recent-post.png" .
+                     M.lookup "thumb" =<< getMetadata (itemIdentifier item)
+
 postsField =
   listField
     "posts"
-    (mconcat [field "url" $ return . const "url0"
-             ,field "title" $ return . const "title0"
-             ,field "date" $ return . const "date0"])
-    (fmap sequence (makeItem ["A", "B"]))
-  --  --(recentFirst =<< loadAll ("posts/*" .&&. complement )
-  --  --   :: Compiler [Item String])
+    (dateContext `mappend` thumbContext `mappend` defaultContext)
+    (fmap (take 2) . recentFirst =<< loadAllSnapshots "posts/*" "content")
 
 overrideTitle :: String -> Context String
 overrideTitle fld = do
