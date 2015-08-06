@@ -52,8 +52,8 @@ main = hakyll $ do
         loadAndApplyTemplate "templates/default.html" ctx >>=
         relativizeUrls
 
-    match "*.html" $ do
-      route idRoute
+    match "pages/*.html" $ do
+      route $ gsubRoute "pages/" (const "")
       compile $
         getResourceBody >>=
         applyAsTemplate standardContext >>=
