@@ -3,9 +3,11 @@
 import Control.Applicative
 import Control.Monad (unless)
 import Data.Foldable (for_)
+import qualified Data.List as List
 import Data.Maybe
 import Data.Monoid (mappend)
-import qualified Data.Map as M
+import Data.Map (Map)
+import qualified Data.Map as Map
 import Data.Traversable (for)
 import Hakyll
 import qualified Text.BibTeX.Entry as BibEntry
@@ -39,10 +41,13 @@ splitBibs = concat <$> do
         writeBibs bs
         return bs
 
+bibIdMap :: [BibEntry.T] -> Map String BibEntry.T
+bibIdMap = foldr (\b -> Map.insert (BibEntry.identifier b) b) Map.empty
+
 --------------------------------------------------------------------------------
 main :: IO ()
 main = hakyll $ do
-    preprocess splitBibs
+    bibs <- preprocess $ bibIdMap <$> splitBibs
 
     match ("js/*" .||.
            "lib/**/*" .||.
@@ -65,14 +70,15 @@ main = hakyll $ do
         relativizeUrls
 
     match "pages/*" $ do
+      let ctx = standardContext -- `mappend` publicationContext bibs
       let compiler id = if ".html" == takeExtension (toFilePath id)
                            then getResourceBody
                            else pandocCompiler
       route $ gsubRoute "pages/" (const "") `composeRoutes`
               setExtension "html"
       compile $ getUnderlying >>= compiler >>=
-        applyAsTemplate standardContext >>=
-        loadAndApplyTemplate "templates/default.html" standardContext >>=
+        applyAsTemplate ctx >>=
+        loadAndApplyTemplate "templates/default.html" ctx >>=
         relativizeUrls
 
     match "templates/*" $ compile templateCompiler
@@ -92,7 +98,7 @@ standardContext = mconcat
 thumbContext :: Context String
 thumbContext = field "thumb" $ \item ->
   return . fromMaybe "recent-post.png" .
-                     M.lookup "thumb" =<< getMetadata (itemIdentifier item)
+                     Map.lookup "thumb" =<< getMetadata (itemIdentifier item)
 
 newsPostsField = withPostsField "newsposts" recentFirst
 postsField = withPostsField "posts" (fmap (take 2) . recentFirst)
@@ -111,4 +117,14 @@ overrideTitle fld = do
    let itemId = itemIdentifier item
    let defaultTitle = takeBaseName (toFilePath itemId)
    title <- getMetadata itemId
-   return $ fromMaybe defaultTitle (M.lookup "title" title)
+   return $ fromMaybe defaultTitle (Map.lookup "title" title)
+
+--paperContext bibs = field "year" $ \item -> do
+--  let Just bib = Map.lookup (show $ itemIdentifier item) bibs
+--  return . fromJust . List.lookup "year" $ BibEntry.fields bib
+--
+--publicationContext bibs =
+--  listField
+--    "publications"
+--    (paperContext bibs `mappend` missingField)
+--    (fmap sequence . makeItem . fromJust $ Map.lookup 2012 bibs)
