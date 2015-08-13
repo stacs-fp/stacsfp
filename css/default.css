@@ -108,29 +108,6 @@ a:hover {
     text-transform: uppercase;
 }
 
-.who-are-we p {
-    color: #777 !important;
-}
-
-.who-are-we .whyfp {
-    font-size: 16px;
-    padding-left: 20px;
-}
-
-.who-are-we .whyfp div {
-    color: #666;
-    padding: 0 0 15px 0;
-}
-
-.fp-icon {
-    display: inline-block;
-    vertical-align: middle;
-    color: #0053fb;
-    /*color: #50a3eb;*/
-    font-size: 21pt;
-    width: 35px;
-}
-
 .highlight-bar {
     width: 9%;
     border-bottom: 2px solid #333;
@@ -175,6 +152,7 @@ footer .social-media a:hover {
     height: 38px;
     margin-left: -10px;
 }
+
 .textbox {
     border-radius: 4px;
     border: 0;
@@ -218,22 +196,6 @@ footer .social-media a:hover {
     margin-left: 8px;
 }
 
-#upcoming-events {}
-
-.event-item {
-    width: 250px;
-    height: 200px;
-}
-
-.event-item img {
-    width: 100%;
-    height: 100%;
-}
-
-.pad-left{
-    margin-left: 25px;
-}
-
 .content {
     font-size: 11pt;
     text-align: justify;
@@ -256,10 +218,6 @@ footer .social-media a:hover {
 .content .highlight-bar {
     border-color: #555;
     margin-bottom: 15px;
-}
-
-.content .news p {
-    margin-bottom: 27px;
 }
 
 button {
@@ -289,109 +247,4 @@ button:hover {
     -ms-transition: 0.2s;
     -moz-transition: 0.2s;
     -webkit-transition: 0.2s;
-}
-
-.content .news .news-item {
-    
-}
-
-.content .news .news-item .news-date {
-    float: right;
-    color: #999;
-}
-
-.people {
-    text-align: center !important;
-}
-
-.people h2 {
-    text-align: left;
-}
-
-.person-avatar {
-    margin-top: 30px;
-    width: 250px;
-    height: 250px;
-    border-radius: 150px;
-}
-
-.person-name {
-    padding-top: 18px;
-    color: #000 !important;
-}
-
-.people p {
-    padding-top: 18px;
-    color: #666;
-}
-
-.post-date {
-    padding-top: 20px;
-    text-align: right;
-    font-size: 16pt;
-    color: #666;
-}
-
-.post-post p {
-    color: #333;
-}
-
-.post-info {
-    color: #666;
-}
-
-.post-categories {
-    margin-left: 0;
-    padding-left: 0;
-    color: #666;
-    list-style-type: none;
-}
-
-.tags {
-    margin-left: 0;
-    padding-left: 0;
-    list-style-type: none;
-}
-
-.tags li {
-    color: #666;
-    display: inline-block;
-}
-
-.pub-years ul {
-    padding-left: 0;
-    margin-left: 0;
-    list-style-type: none;
-}
-.pub-years li {
-    padding-right: 8px;
-    display: inline-block;
-}
-
-.pub-actions {
-    text-align: right;
-    margin-left: 0;
-    padding-left: 0;
-    list-style-type: none;
-}
-
-.news .post-p {
-    margin-top: 20px;
-    column-count: 2;
-    column-gap: 20px;
-
-    -webkit-column-count: 2;
-    -moz-column-count: 2;
-
-    -webkit-column-gap: 40px;
-    -moz-column-gap: 40px;
-}
-
-.news .posts ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.news .posts ul li {
-    margin: 0 0 10px 0;
 }

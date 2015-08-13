@@ -1,0 +1,17 @@
+.pub-years ul {
+    padding-left: 0;
+    margin-left: 0;
+    list-style-type: none;
+}
+.pub-years li {
+    padding-right: 8px;
+    display: inline-block;
+}
+
+.pub-actions {
+    text-align: right;
+    margin-left: 0;
+    padding-left: 0;
+    list-style-type: none;
+}
+
