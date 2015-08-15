@@ -10,6 +10,7 @@ import Data.Map (Map)
 import qualified Data.Map as Map
 import Data.Traversable (for)
 import Hakyll
+import Hakyll.Core.Identifier (fromFilePath)
 import qualified Text.BibTeX.Entry as BibEntry
 import qualified Text.BibTeX.Format as BibFormat
 import Text.BibTeX.Parse (file, skippingLeadingSpace )
@@ -60,6 +61,9 @@ main = hakyll $ do
       route   idRoute
       compile compressCssCompiler
 
+    match "people/*" $
+      compile $ pandocCompiler >>= applyAsTemplate standardContext
+
     match "posts/*" $ do
       let ctx = constField "active" "news" `mappend` standardContext
       route $ setExtension "html"
@@ -92,6 +96,7 @@ standardContext = mconcat
   ,titleField "active"
   ,newsPostsField
   ,postsField
+  ,peopleContext
   ,dateContext
   ,defaultContext]
 
@@ -110,6 +115,16 @@ withPostsField fld c =
              ,teaserField "teaser" "content"
              ,dateContext, thumbContext, defaultContext])
     (c =<< loadAllSnapshots "posts/*" "content")
+
+peopleContext =
+  listField "people"
+    (avatar `mappend` defaultContext)
+    (loadAll "people/*" :: Compiler [Item String])
+  where avatar = field "avatar" $ \item -> do
+          let itemId = itemIdentifier item
+          let defaultAvatar = takeBaseName (toFilePath itemId)
+          metadata <- getMetadata itemId
+          return $ fromMaybe defaultAvatar (Map.lookup "avatar" metadata)
 
 overrideTitle :: String -> Context String
 overrideTitle fld = do

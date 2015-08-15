@@ -1,81 +1,14 @@
 <section class="people">
-  <div class="row">
-    <div class="col-md-4">
-      <figure>
-        <img class="person-avatar" src="images/people/p1.jpg">
-      </figure>
-      
-      <div class="person-name">Kevin Hammond</div>
-      <p>
-        Functional programming, resource-bounded computation, grid &
-        parallel computing, embedded systems, real-time systems, programming
-        language implementation
-      </p>
-    </div>
-    
-    <div class="col-md-4">
-      <figure>
-        <img class="person-avatar" src="images/people/p1.jpg">
-      </figure>
-      
-      <div class="person-name">Edwin Brady</div>
-      <p>
-        Functional programming, resource bounded computation, generative
-        programming, type theory, dependent types.
-      </p>
-    </div>
-    
-    <div class="col-md-4">
-      <figure>
-        <img class="person-avatar" src="images/people/p1.jpg">
-      </figure>
-      
-      <div class="person-name">Alexander Konovalov</div>
-      <p>
-        Symbolic computation, software composability and symbolic computing
-        on the Grid, computational group and group ring theory, and software
-        development for the computational algebra system GAP.
-      </p>
-    </div>
-  </div><!--/row-->
-  
-  <div class="row">
-    <div class="col-md-4">
-      <figure>
-        <img class="person-avatar" src="images/people/p1.jpg">
-      </figure>
-      
-      <div class="person-name">Kevin Hammond</div>
-      <p>
-        Functional programming, resource-bounded computation, grid &
-        parallel computing, embedded systems, real-time systems, programming
-        language implementation
-      </p>
-    </div>
-    
-    <div class="col-md-4">
-      <figure>
-        <img class="person-avatar" src="images/people/p1.jpg">
-      </figure>
-      
-      <div class="person-name">Edwin Brady</div>
-      <p>
-        Functional programming, resource bounded computation, generative
-        programming, type theory, dependent types.
-      </p>
-    </div>
-    
-    <div class="col-md-4">
-      <figure>
-        <img class="person-avatar" src="images/people/p1.jpg">
-      </figure>
-      
-      <div class="person-name">Alexander Konovalov</div>
-      <p>
-        Symbolic computation, software composability and symbolic computing
-        on the Grid, computational group and group ring theory, and software
-        development for the computational algebra system GAP.
-      </p>
-    </div>
-  </div><!--/row-->
+  <ul>
+    $for(people)$
+      <li>
+        <figure>
+          <img class="person-avatar" src="images/people/$avatar$.jpg">
+        </figure>
+        
+        <div class="person-name">$name$</div>
+        <p>$body$</p>
+      </li>
+    $endfor$
+  </ul>
 </section><!--/people-->

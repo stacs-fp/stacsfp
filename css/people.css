@@ -1,35 +1,37 @@
-.people {
+.content .people {
     text-align: center !important;
 }
 
-.people h2 {
+.content .people h2 {
     text-align: left;
 }
 
-.people ul {
+.content .people ul {
     padding-left: 0;
     margin-left: 0;
     list-style-type: none;
 }
 
-.people li {
-    padding-right: 8px;
+.content .people li {
+    vertical-align: top;
+    margin-right: 40px;
     display: inline-block;
+    width: 300px;
 }
 
-.person-avatar {
+.content .person-avatar {
     margin-top: 30px;
     width: 250px;
     height: 250px;
     border-radius: 150px;
 }
 
-.person-name {
+.content .person-name {
     padding-top: 18px;
     color: #000 !important;
 }
 
-.people p {
+.content .people p {
     padding-top: 18px;
     color: #666;
 }
