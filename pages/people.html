@@ -1,13 +1,13 @@
 <section class="people">
   <ul>
     $for(people)$
-      <li>
+      <li itemtype="http://schema.org/Person">
         <figure>
-          <img class="person-avatar" src="images/people/$avatar$.jpg">
+          <img itemprop="image" class="person-avatar" src="images/people/$avatar$.jpg">
         </figure>
         
-        <div class="person-name">$name$</div>
-        <p>$body$</p>
+        <span itemprop="name" class="person-name">$name$</div>
+        <p itemprop="description">$body$</p>
       </li>
     $endfor$
   </ul>
