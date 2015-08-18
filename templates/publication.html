@@ -1,0 +1,82 @@
+<ul>
+  <div class="actions">
+    <ul>
+      $if(paper)$
+        <li><a href="$paper$"><i class="fa fa-download"></i></a></li>
+      $endif$
+      <li><a href="$bibtex$"><i class="fa fa-book"></i></a></li>
+    </ul>
+  </div>
+
+  <div class="citation">
+    $if(authorlast)$
+      <span class="author">
+        <span class="last">$authorlast$</span>,
+        <span class="first">$authorfirst$</span>,
+      </span>
+    $endif$
+
+    $if(title)$
+      <span class="title">$title$</span>
+    $endif$
+
+    $if(booktitle)$
+      <span class="booktitle">$booktitle$</span>
+    $endif$
+
+    $if(address)$
+      <span class="address">$address$</span>
+    $endif$
+
+    $if(editorlast)$
+      <span class="editor">
+        <span class="last">$editorlast$</span>
+        <span class="first">$editorfirst$</span>
+      </span>
+    $endif$
+
+    $if(volume)$
+      <span class="volume">$volume$</span>
+    $endif$
+
+    $if(series)$
+      <span class="series">$series$</span>
+    $endif$
+
+    $if(edition)$
+      <span class="edition">$edition$</span>
+    $endif$
+
+    $if(organization)$
+      <span class="organization">$organization$</span>
+    $endif$
+
+    $if(publisher)$
+      <span class="publisher">$publisher$</span>
+    $endif$
+
+    $if(pages)$
+      <span class="pages">$pages$</span>
+    $endif$
+
+    $if(howpublished)$
+      <span class="howpublished">$howpublished$</span>
+    $endif$
+
+    $if(school)$
+      <span class="school">$school$</span>
+    $endif$
+
+    $if(month)$
+      <span class="month">$month$</span>
+    $endif$
+
+    $if(year)$
+      <span class="year">$year$</span>
+    $endif$
+
+    $if(note)$
+      <span class="note">$note$</span>
+    $endif$
+  </div>
+</ul>

@@ -1,17 +1,64 @@
-.pub-years ul {
+.publications ul {
     padding-left: 0;
     margin-left: 0;
     list-style-type: none;
 }
-.pub-years li {
-    padding-right: 8px;
+
+.publications li {
     display: inline-block;
 }
 
-.pub-actions {
-    text-align: right;
-    margin-left: 0;
-    padding-left: 0;
-    list-style-type: none;
+.publications .years li {
+    padding-right: 8px;
 }
 
+.publications .actions {
+    float: left;
+    width: 4%;
+}
+
+.publications .citation {
+    margin-left: 4%;
+}
+
+.citation .author { text-transform: uppercase; }
+.citation .author .last {}
+.citation .author .first::first-letter { visibility: visible; }
+.citation .author .first::after { content: "."; }
+.citation .author .first { display: none; }
+
+.proceedings .title,
+.manual .title,
+.phdthesis .title,
+.inbook .title
+{ font-style: italic; }
+
+.citation .booktitle::before { content: "In "; }
+.citation .booktitle { font-style: italic; }
+.citation .booktitle::after { content: "."; }
+
+.citation .address {}
+
+.citation .editor::after { content: "Eds."; }
+.citation .editor {}
+.citation .editor .last {}
+.citation .editor .first {}
+
+.citation .volume::before { content: "vol."; }
+.citation .volume {}
+
+.citation .series::before { content: "of"; }
+.citation .series { style: italic; }
+
+.citation .edition {}
+.citation .organization {}
+.citation .publisher {}
+
+.citation .pages::before { content: "pp." }
+.citation .pages {}
+
+.citation .howpublished {}
+.citation .school {}
+.citation .month {}
+.citation .year {}
+.citation .note {}

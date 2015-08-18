@@ -1,18 +1,23 @@
 <div class="row">
 
-  <section class="col-md-2 pub-years">
+  <section class="col-md-2 years">
     <h2>Year</h2>
     <ul>
-      <!--
-      for(publicationyears)$
+      $for(publicationyears)$
         <li><a href="#$year$">$year$</a></li>
-      endfor$
-      -->
+      $endfor$
     </ul>
   </section>
 
   <section class="col-md-10">
-    <!--partial("publication-list.html")$-->
+    $for(publicationyears)$
+      <h2 id="$year$">$year$</h2>
+      <ul>
+        $for(publications)$
+          $partial("templates/publication.html")$
+        $endfor$
+      </ul>
+    $endfor$
   </section>
 
 </div>

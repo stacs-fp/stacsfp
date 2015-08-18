@@ -1,11 +1,11 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 import Control.Applicative
-import Control.Monad (unless)
+import Control.Monad (guard, unless)
 import Data.Foldable (for_)
 import qualified Data.List as List
 import Data.Maybe
-import Data.Monoid (mappend)
+import Data.Monoid ((<>))
 import Data.Map (Map)
 import qualified Data.Map as Map
 import Data.Traversable (for)
@@ -13,14 +13,16 @@ import Hakyll
 import Hakyll.Core.Identifier (fromFilePath)
 import qualified Text.BibTeX.Entry as BibEntry
 import qualified Text.BibTeX.Format as BibFormat
-import Text.BibTeX.Parse (file, skippingLeadingSpace )
+import Text.BibTeX.Parse (file, skippingLeadingSpace)
+import Text.LaTeX.Character (toUnicodeString)
 import Text.Parsec.String (parseFromFile)
 import System.Directory (createDirectoryIfMissing, doesFileExist, getDirectoryContents)
 import System.FilePath ((</>), (<.>), takeBaseName, takeExtension)
 import System.IO (hPutStrLn, stderr)
 
 bibEntryFilePath :: BibEntry.T -> FilePath
-bibEntryFilePath e = "bibtex" </> BibEntry.identifier e <.> "bib"
+bibEntryFilePath e =
+  "bibtex" </> BibEntry.identifier e <.> "bib"
 
 writeBibs :: [BibEntry.T] -> IO ()
 writeBibs =
@@ -42,18 +44,20 @@ splitBibs = concat <$> do
         writeBibs bs
         return bs
 
-bibIdMap :: [BibEntry.T] -> Map String BibEntry.T
-bibIdMap = foldr (\b -> Map.insert (BibEntry.identifier b) b) Map.empty
+bibYearMap :: [BibEntry.T] -> Map String [BibEntry.T]
+bibYearMap = foldr (\b m -> maybe m (\yr -> Map.insertWith (++) yr [b] m)
+                                  (lookup "year" (BibEntry.fields b)))
+                   Map.empty
 
 --------------------------------------------------------------------------------
 main :: IO ()
 main = hakyll $ do
-    bibs <- preprocess $ bibIdMap <$> splitBibs
+    bibs <- preprocess $ bibYearMap <$> splitBibs
 
     match ("js/*" .||.
            "lib/**/*" .||.
            "images/**" .||.
-           "bibtex/*") $ do
+           "bibtex/**") $ do
       route idRoute
       compile copyFileCompiler
 
@@ -65,7 +69,7 @@ main = hakyll $ do
       compile $ pandocCompiler >>= applyAsTemplate standardContext
 
     match "posts/*" $ do
-      let ctx = constField "active" "news" `mappend` standardContext
+      let ctx = constField "active" "news" <> standardContext
       route $ setExtension "html"
       compile $ pandocCompiler >>=
         loadAndApplyTemplate "templates/post.html" ctx >>=
@@ -74,7 +78,7 @@ main = hakyll $ do
         relativizeUrls
 
     match "pages/*" $ do
-      let ctx = standardContext -- `mappend` publicationContext bibs
+      let ctx = standardContext <> publicationContext bibs
       let compiler id = if ".html" == takeExtension (toFilePath id)
                            then getResourceBody
                            else pandocCompiler
@@ -118,7 +122,7 @@ withPostsField fld c =
 
 peopleContext =
   listField "people"
-    (avatar `mappend` defaultContext)
+    (avatar <> defaultContext)
     (loadAll "people/*" :: Compiler [Item String])
   where avatar = field "avatar" $ \item -> do
           let itemId = itemIdentifier item
@@ -134,12 +138,38 @@ overrideTitle fld = do
    title <- getMetadata itemId
    return $ fromMaybe defaultTitle (Map.lookup "title" title)
 
---paperContext bibs = field "year" $ \item -> do
---  let Just bib = Map.lookup (show $ itemIdentifier item) bibs
---  return . fromJust . List.lookup "year" $ BibEntry.fields bib
---
---publicationContext bibs =
---  listField
---    "publications"
---    (paperContext bibs `mappend` missingField)
---    (fmap sequence . makeItem . fromJust $ Map.lookup 2012 bibs)
+paperContext = mconcat
+  [field "authorlast" (getField "author")
+  ,field "authorfirst" (getField "author")
+  ,mkfield "title"
+  ,mkfield "booktitle"
+  ,mkfield "address"
+  ,field "editorlast" (getField "editor")
+  ,field "editorfirst" (getField "editor")
+  ,mkfield "volume"
+  ,mkfield "series"
+  ,mkfield "edition"
+  ,mkfield "organization"
+  ,mkfield "publisher"
+  ,mkfield "pages"
+  ,mkfield "howpublished"
+  ,mkfield "school"
+  ,mkfield "month"
+  ,mkfield "year"
+  ,mkfield "note"
+  ,field "bibtex" (return . bibEntryFilePath . itemBody)]
+  where getField fld = maybe empty (return . toUnicodeString) . lookup fld . BibEntry.fields . itemBody
+        mkfield fld = field fld (getField fld)
+papersContext bibs =
+  listFieldWith
+    "publications"
+    paperContext
+    (fmap sequence . makeItem . snd . itemBody)
+
+publicationContext bibs =
+  listField
+    "publicationyears"
+    (field "year" (return . fst . itemBody) <>
+     papersContext bibs <>
+     missingField)
+    (fmap sequence . makeItem . reverse $ Map.toList bibs)
