@@ -21,6 +21,11 @@
     width: 35px;
 }
 
+.fp-forall::before {
+    font-family: sans-serif !important;
+    content: "\2200";
+}
+
 #upcoming-events {}
 
 .event-item {
