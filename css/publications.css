@@ -23,9 +23,10 @@
 
 .citation .author { text-transform: uppercase; }
 .citation .author .last {}
-.citation .author .first::first-letter { visibility: visible; }
-.citation .author .first::after { content: "."; }
-.citation .author .first { display: none; }
+.citation .author { display: inline; }
+.citation .author li + li::before { content: "and"; }
+.citation .author .first .head::after { content: "."; }
+.citation .author .first .tail { display: none; }
 
 .proceedings .title,
 .manual .title,

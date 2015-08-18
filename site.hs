@@ -4,6 +4,7 @@ import Control.Applicative
 import Control.Monad (guard, unless)
 import Data.Foldable (for_)
 import qualified Data.List as List
+import Data.List.Split (splitOn)
 import Data.Maybe
 import Data.Monoid ((<>))
 import Data.Map (Map)
@@ -19,6 +20,8 @@ import Text.Parsec.String (parseFromFile)
 import System.Directory (createDirectoryIfMissing, doesFileExist, getDirectoryContents)
 import System.FilePath ((</>), (<.>), takeBaseName, takeExtension)
 import System.IO (hPutStrLn, stderr)
+
+import Debug.Trace
 
 bibEntryFilePath :: BibEntry.T -> FilePath
 bibEntryFilePath e =
@@ -139,8 +142,10 @@ overrideTitle fld = do
    return $ fromMaybe defaultTitle (Map.lookup "title" title)
 
 paperContext = mconcat
-  [field "authorlast" (getField "author")
-  ,field "authorfirst" (getField "author")
+  [listFieldWith "authors"
+     (field "authorfirst" (return . wrapFirstLetter . trimSpace . drop 1 . snd . itemBody) <>
+      field "authorlast" (return . trimSpace . fst . itemBody))
+     (fmap sequence . makeItem . maybe [] (parseAuthors . toUnicodeString) . lookupField "author")
   ,mkfield "title"
   ,mkfield "booktitle"
   ,mkfield "address"
@@ -158,8 +163,25 @@ paperContext = mconcat
   ,mkfield "year"
   ,mkfield "note"
   ,field "bibtex" (return . bibEntryFilePath . itemBody)]
-  where getField fld = maybe empty (return . toUnicodeString) . lookup fld . BibEntry.fields . itemBody
+  where trimSpace = dropWhile (== ' ')
+
+        wrapFirstLetter :: String -> String
+        wrapFirstLetter []     = []
+        wrapFirstLetter (x:xs) = "<span class=\"head\">" ++ x : "</span>" ++
+                                 "<span class=\"tail\">" ++ xs ++ "</span>"
+
+        lookupField :: String -> Item BibEntry.T -> Maybe String
+        lookupField fld = lookup fld . BibEntry.fields . itemBody
+
+        getField :: String -> Item BibEntry.T -> Compiler String
+        getField fld = maybe empty (return . toUnicodeString) . lookupField fld
+
+        mkfield :: String -> Context BibEntry.T
         mkfield fld = field fld (getField fld)
+
+        parseAuthors :: String -> [(String, String)]
+        parseAuthors = map (span (/= ',')) . splitOn "and"
+
 papersContext bibs =
   listFieldWith
     "publications"

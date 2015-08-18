@@ -9,12 +9,14 @@
   </div>
 
   <div class="citation">
-    $if(authorlast)$
-      <span class="author">
-        <span class="last">$authorlast$</span>,
-        <span class="first">$authorfirst$</span>,
-      </span>
-    $endif$
+    <ul class="author">
+      $for(authors)$
+        <li>
+          <span class="last">$authorlast$</span>,
+          <span class="first">$authorfirst$</span>
+        </li>
+      $endfor$
+    </ul>
 
     $if(title)$
       <span class="title">$title$</span>
