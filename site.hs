@@ -159,7 +159,6 @@ paperContext = mconcat
   ,mkfield "pages"
   ,mkfield "howpublished"
   ,mkfield "school"
-  ,mkfield "month"
   ,mkfield "year"
   ,mkfield "note"
   ,field "bibtex" (return . bibEntryFilePath . itemBody)]

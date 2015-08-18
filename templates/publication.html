@@ -1,29 +1,29 @@
 <ul>
-  <div class="actions">
+  <nav class="actions">
     <ul>
       $if(paper)$
         <li><a href="$paper$"><i class="fa fa-download"></i></a></li>
       $endif$
       <li><a href="$bibtex$"><i class="fa fa-book"></i></a></li>
     </ul>
-  </div>
+  </nav>
 
-  <div class="citation">
-    <ul class="author">
+  <div itemscope itemtype="http://schema.org/ScholarlyArticle" class="citation">
+    <ul itemscope itemtype="http://schema.org/Person" itemprop="author" class="author">
       $for(authors)$
-        <li>
-          <span class="last">$authorlast$</span>,
-          <span class="first">$authorfirst$</span>
-        </li>
+        <li><span itemprop="familyName" class="last">$authorlast$</span>,
+            <span itemprop="givenName" class="first">$authorfirst$</span></li>
       $endfor$
     </ul>
 
     $if(title)$
-      <span class="title">$title$</span>
+      <span itemprop="name" class="title">$title$</span>
     $endif$
 
     $if(booktitle)$
-      <span class="booktitle">$booktitle$</span>
+      <span itemscope itemtype="http://schema.org/Series" itemprop="isPartOf">
+        <span itemprop="name" class="booktitle">$booktitle$</span>
+      </span>
     $endif$
 
     $if(address)$
@@ -31,9 +31,9 @@
     $endif$
 
     $if(editorlast)$
-      <span class="editor">
-        <span class="last">$editorlast$</span>
-        <span class="first">$editorfirst$</span>
+      <span itemscope itemtype="http://schema.org/Person" itemprop="editor" class="editor">
+        <span itemprop="familyName" class="last">$editorlast$</span>
+        <span itemprop="givenName" class="first">$editorfirst$</span>
       </span>
     $endif$
 
@@ -50,15 +50,15 @@
     $endif$
 
     $if(organization)$
-      <span class="organization">$organization$</span>
+      <span itemprop="publisher" class="organization">$organization$</span>
     $endif$
 
     $if(publisher)$
-      <span class="publisher">$publisher$</span>
+      <span itemprop="publisher" class="publisher">$publisher$</span>
     $endif$
 
     $if(pages)$
-      <span class="pages">$pages$</span>
+      <span itemprop="pagination" class="pages">$pages$</span>
     $endif$
 
     $if(howpublished)$
@@ -66,15 +66,11 @@
     $endif$
 
     $if(school)$
-      <span class="school">$school$</span>
-    $endif$
-
-    $if(month)$
-      <span class="month">$month$</span>
+      <span itemprop="organization" class="school">$school$</span>
     $endif$
 
     $if(year)$
-      <span class="year">$year$</span>
+      <time itemprop="datePublished" class="year">$year$</time>
     $endif$
 
     $if(note)$
