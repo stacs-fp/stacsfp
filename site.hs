@@ -21,8 +21,6 @@ import System.Directory (createDirectoryIfMissing, doesFileExist, getDirectoryCo
 import System.FilePath ((</>), (<.>), takeBaseName, takeExtension)
 import System.IO (hPutStrLn, stderr)
 
-import Debug.Trace
-
 bibEntryFilePath :: BibEntry.T -> FilePath
 bibEntryFilePath e =
   "bibtex" </> BibEntry.identifier e <.> "bib"
@@ -68,11 +66,30 @@ main = hakyll $ do
       route   idRoute
       compile compressCssCompiler
 
+    tags <- buildTags "posts/*" (fromCapture "tags/*.html")
+    tagsRules tags $ \tag pat -> do
+      let ctx = constField "tag" tag
+             <> constField "active" "news"
+             <> constField "title" ("Posts tagged " ++ tag)
+             <> listField "newsposts"
+                  postsFieldContext
+                  (recentFirst =<< loadAll pat)
+             <> baseContext
+      route idRoute
+      compile $ makeItem "" >>=
+        applyAsTemplate ctx >>=
+        loadAndApplyTemplate "templates/tag.html" ctx >>=
+        loadAndApplyTemplate "templates/default.html"
+          (bodyField "body" <> ctx) >>=
+        relativizeUrls
+
     match "people/*" $
       compile $ pandocCompiler >>= applyAsTemplate standardContext
 
     match "posts/*" $ do
-      let ctx = constField "active" "news" <> standardContext
+      let ctx = constField "active" "news"
+             <> tagsCloudField "tags" tags
+             <> standardContext
       route $ setExtension "html"
       compile $ pandocCompiler >>=
         loadAndApplyTemplate "templates/post.html" ctx >>=
@@ -81,7 +98,10 @@ main = hakyll $ do
         relativizeUrls
 
     match "pages/*" $ do
-      let ctx = standardContext <> publicationContext bibs
+      let ctx = publicationContext bibs
+             <> tagsCloudField "tags" tags
+             <> newsPostsField
+             <> standardContext
       let compiler id = if ".html" == takeExtension (toFilePath id)
                            then getResourceBody
                            else pandocCompiler
@@ -97,31 +117,39 @@ main = hakyll $ do
 --------------------------------------------------------------------------------
 dateContext = dateField "date" "%B %e, %Y"
 
-standardContext :: Context String
-standardContext = mconcat
+tagsCloudField :: String -> Tags -> Context String
+tagsCloudField fld tags = field fld . const $ renderTagCloud 90.0 250.0 tags
+
+baseContext :: Context String
+baseContext = mconcat
   [overrideTitle "title"
   ,titleField "active"
-  ,newsPostsField
   ,postsField
   ,peopleContext
-  ,dateContext
-  ,defaultContext]
+  ,dateContext]
+
+standardContext :: Context String
+standardContext = baseContext <> defaultContext
 
 thumbContext :: Context String
 thumbContext = field "thumb" $ \item ->
   return . fromMaybe "recent-post.png" .
                      Map.lookup "thumb" =<< getMetadata (itemIdentifier item)
 
-newsPostsField = withPostsField "newsposts" recentFirst
+postDateContext = dateField "day" "%d" <>
+                  dateField "shortmonth" "%b"
+postsFieldContext = mconcat
+  [postDateContext
+  ,dateContext
+  ,thumbContext
+  ,teaserField "teaser" "content"
+  ,defaultContext]
+
 postsField = withPostsField "posts" (fmap (take 2) . recentFirst)
+newsPostsField = withPostsField "newsposts" recentFirst
 
 withPostsField fld c =
-  listField
-    fld
-    (mconcat [dateField "day" "%d", dateField "shortmonth" "%b"
-             ,teaserField "teaser" "content"
-             ,dateContext, thumbContext, defaultContext])
-    (c =<< loadAllSnapshots "posts/*" "content")
+  listField fld postsFieldContext (c =<< loadAllSnapshots "posts/*" "content")
 
 peopleContext =
   listField "people"
