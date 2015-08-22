@@ -1,11 +1,11 @@
 <div class="row">
 
   <section class="col-md-2">
-    <h2>Category</h2>
+    <h2>Categories</h2>
     <ul class="post-categories">
-      <li>Ducks</li>
-      <li>Pigs</li>
-      <li>The internet</li>
+      $for(categories)$
+        <li><a href="$url$">$category$</a></li>
+      $endfor$
     </ul>
 
     <h2>Tags</h2>

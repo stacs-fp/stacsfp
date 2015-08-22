@@ -18,6 +18,7 @@ import Text.BibTeX.Parse (file, skippingLeadingSpace)
 import Text.LaTeX.Character (toUnicodeString)
 import Text.Parsec.String (parseFromFile)
 import System.Directory (createDirectoryIfMissing, doesFileExist, getDirectoryContents)
+import System.FilePath.Posix (takeDirectory)
 import System.FilePath ((</>), (<.>), takeBaseName, takeExtension)
 import System.IO (hPutStrLn, stderr)
 
@@ -66,29 +67,19 @@ main = hakyll $ do
       route   idRoute
       compile compressCssCompiler
 
-    tags <- buildTags "posts/*" (fromCapture "tags/*.html")
-    tagsRules tags $ \tag pat -> do
-      let ctx = constField "tag" tag
-             <> constField "active" "news"
-             <> constField "title" ("Posts tagged " ++ tag)
-             <> listField "newsposts"
-                  postsFieldContext
-                  (recentFirst =<< loadAll pat)
-             <> baseContext
-      route idRoute
-      compile $ makeItem "" >>=
-        applyAsTemplate ctx >>=
-        loadAndApplyTemplate "templates/tag.html" ctx >>=
-        loadAndApplyTemplate "templates/default.html"
-          (bodyField "body" <> ctx) >>=
-        relativizeUrls
+    tags <- buildTags "posts/**" (fromCapture "tags/*.html")
+    createTagsPages tags
+
+    categories <- buildCategories "posts/**" (fromCapture "categories/*.html")
+    createTagsPages categories
 
     match "people/*" $
       compile $ pandocCompiler >>= applyAsTemplate standardContext
 
-    match "posts/*" $ do
+    match "posts/**" $ do
       let ctx = constField "active" "news"
              <> tagsCloudField "tags" tags
+             <> categoriesField "categories" categories
              <> standardContext
       route $ setExtension "html"
       compile $ pandocCompiler >>=
@@ -100,6 +91,7 @@ main = hakyll $ do
     match "pages/*" $ do
       let ctx = publicationContext bibs
              <> tagsCloudField "tags" tags
+             <> categoriesField "categories" categories
              <> newsPostsField
              <> standardContext
       let compiler id = if ".html" == takeExtension (toFilePath id)
@@ -113,6 +105,23 @@ main = hakyll $ do
         relativizeUrls
 
     match "templates/*" $ compile templateCompiler
+
+createTagsPages tags =
+ tagsRules tags $ \tag pat -> do
+   let ctx = constField "tag" tag
+          <> constField "active" "news"
+          <> constField "title" ("Posts tagged " ++ tag)
+          <> listField "newsposts"
+               postsFieldContext
+               (recentFirst =<< loadAll pat)
+          <> baseContext
+   route idRoute
+   compile $ makeItem "" >>=
+     applyAsTemplate ctx >>=
+     loadAndApplyTemplate "templates/tag.html" ctx >>=
+     loadAndApplyTemplate "templates/default.html"
+       (bodyField "body" <> ctx) >>=
+     relativizeUrls
 
 --------------------------------------------------------------------------------
 dateContext = dateField "date" "%B %e, %Y"
@@ -149,7 +158,7 @@ postsField = withPostsField "posts" (fmap (take 2) . recentFirst)
 newsPostsField = withPostsField "newsposts" recentFirst
 
 withPostsField fld c =
-  listField fld postsFieldContext (c =<< loadAllSnapshots "posts/*" "content")
+  listField fld postsFieldContext (c =<< loadAllSnapshots "posts/**" "content")
 
 peopleContext =
   listField "people"
@@ -222,3 +231,14 @@ publicationContext bibs =
      papersContext bibs <>
      missingField)
     (fmap sequence . makeItem . reverse $ Map.toList bibs)
+
+categoriesField :: String -> Tags -> Context a
+categoriesField fld tags =
+  listField fld
+    (field "url" (return . snd . itemBody) <>
+     field "category" (return . fst . itemBody))
+    (do ts <- for (tagsMap tags) $ \(tag, _) -> do
+          r <- getRoute (tagsMakeId tags tag)
+          return (tag, r)
+        fmap sequence . makeItem .
+          map (\(x, y) -> (x, fromJust y)) . filter (isJust . snd) $ ts)
