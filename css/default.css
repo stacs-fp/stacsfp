@@ -248,3 +248,12 @@ button:hover {
     -moz-transition: 0.2s;
     -webkit-transition: 0.2s;
 }
+
+.news-date {
+    float: right;
+    color: #999;
+}
+.news-body {
+    padding-top: 10px;
+    clear: right;
+}

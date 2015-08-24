@@ -1,10 +1,17 @@
-<div class="info">
-    Posted on $date$
-    $if(author)$
-        by $author$
-    $endif$
-</div>
+<article itemscope itemtype="https://schema.org/Article">
+  <div class="news-date">
+      Posted on <time itemprop="datePublished">$date$</time>
+      $if(author)$
+        by
+        <span itemprop="author" itemscope itemtype="https://schema.org/Author">
+          <span itemprop="name">$author$</span>
+        </span>
+      $endif$
+  </div>
 
-$if(body)$
-  $body$
-$endif$
+  $if(body)$
+    <div itemprop="articleBody" class="news-body">
+      $body$
+    </div>
+  $endif$
+</article>

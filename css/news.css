@@ -6,7 +6,7 @@
     
 }
 
-.content .news .news-item .news-date {
+.news-date {
     float: right;
     color: #999;
 }
@@ -44,7 +44,7 @@
     display: inline-block;
 }
 
-.news .post-p {
+.post-p {
     margin-top: 20px;
     column-count: 2;
     column-gap: 20px;
@@ -56,11 +56,11 @@
     -moz-column-gap: 40px;
 }
 
-.news .posts ul {
+.posts ul {
     list-style-type: none;
     padding: 0;
 }
 
-.news .posts ul li {
+.posts ul li {
     margin: 0 0 10px 0;
 }

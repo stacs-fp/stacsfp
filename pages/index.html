@@ -82,30 +82,29 @@ title: St Andrews Functional Programming Group
         </div>
       </section><!--/row-->
 
-      <section class="row news">
+      <section itemscope itemtype="https://schema.org/Blog" class="row news">
         <h2>News</h2>
 
-        <article class="news-item">
-          <div class="news-date">Posted by Santa on 10/10/10</div>
-          <h3>Lorem ipsum</h3>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Vestibulum placerat tortor eget volutpat maximus. Nulla
-            facilisis pretium sapien nec efficitur. Quisque pellentesque
-            venenatis convallis. Suspendisse dignissim porttitor metus, in
-            eleifend augue finibus ullamcorper. Quisque scelerisque nulla
-            sit amet arcu ultricies pharetra. Donec in leo et metus
-            tincidunt varius. Integer tristique mauris nec eros consequat,
-            nec bibendum ex pharetra. Cras aliquet posuere tortor, ac
-            fringilla nunc mattis et. Aenean ultrices lacus id diam
-            dignissim volutpat. Donec vitae erat a tellus posuere mattis.
-            Nunc accumsan at tellus vel porttitor. Phasellus eget elementum
-            lorem, eget rutrum erat. Nam eu orci volutpat, ullamcorper
-            libero at, vulputate diam.
-          </p>
+        $for(posts)$
+          <article itemprop="blogPosts" itemscope itemtype="https://schema.org/BlogPosting" class="news-item">
+            <div class="news-date">
+              $if(author)$
+                Posted by
+                <span itemscope itemprop="author" itemtype="https://schema.org/Author">
+                  <span itemprop="name">$author$</span>
+                </span>
+                on
+              $endif$
+              <time itemprop="datePublished">$date$</time>
+            </div>
+            <h3 itemprop="name"><a href="$url$">$title$</a></h3>
+            <p itemprop="articleBody">$teaser$</p>
 
-          <button>Read more</button>
-        </article>
+            <a itemprop="url" href="$url$">
+              <button>Read more</button>
+            </a>
+          </article>
+        $endfor$
 
       </section><!--/row-->
     </div><!--/pad-left-->

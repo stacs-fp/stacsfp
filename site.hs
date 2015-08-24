@@ -83,8 +83,9 @@ main = hakyll $ do
              <> standardContext
       route $ setExtension "html"
       compile $ pandocCompiler >>=
-        loadAndApplyTemplate "templates/post.html" ctx >>=
         saveSnapshot "content" >>=
+        loadAndApplyTemplate "templates/post.html" ctx >>=
+        saveSnapshot "formatted" >>=
         loadAndApplyTemplate "templates/default.html" ctx >>=
         relativizeUrls
 
@@ -92,7 +93,7 @@ main = hakyll $ do
       let ctx = publicationContext bibs
              <> tagsCloudField "tags" tags
              <> categoriesField "categories" categories
-             <> newsPostsField
+             <> withPostsField "newsposts" recentFirst
              <> standardContext
       let compiler id = if ".html" == takeExtension (toFilePath id)
                            then getResourceBody
@@ -133,7 +134,7 @@ baseContext :: Context String
 baseContext = mconcat
   [overrideTitle "title"
   ,titleField "active"
-  ,postsField
+  ,withPostsField "posts" (fmap (take 2) . recentFirst)
   ,peopleContext
   ,dateContext]
 
@@ -153,9 +154,6 @@ postsFieldContext = mconcat
   ,thumbContext
   ,teaserField "teaser" "content"
   ,defaultContext]
-
-postsField = withPostsField "posts" (fmap (take 2) . recentFirst)
-newsPostsField = withPostsField "newsposts" recentFirst
 
 withPostsField fld c =
   listField fld postsFieldContext (c =<< loadAllSnapshots "posts/**" "content")

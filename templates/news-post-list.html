@@ -1,25 +1,32 @@
 <ul>
   $for(newsposts)$
-   <li class="row">
-     <div class="col-md-1 post-date">
-       $day$<br>$shortmonth$
-     </div>
-     
-     <div class="col-md-11 post-post">
-       <h2><a href="$url$">$title$</a></h2>
-       $if(author)$
-         <p class="post-info">posted by $author$</p>
-       $endif$
-       $if(teaser)$
-         <p>$teaser$</p>
-         <a href="$url$"><button>Read more</button></a>
-       $else$
-         $if(body)$
-           <p>$body$</p>
-           <a href="$url$"><button>Read more</button></a>
-         $endif$
-       $endif$
-     </div>
-   </li>
+    <li class="row">
+      <article itemprop="blogPosts" itemscope itemtype="https://schema.org/BlogPosting">
+        <div class="col-md-1 post-date">
+          <time itemprop="datePublished">$day$<br>$shortmonth$</time>
+        </div>
+
+        <div class="col-md-11 post-post">
+          <h2 itemprop="name"><a href="$url$">$title$</a></h2>
+          $if(author)$
+            <p class="post-info">
+              posted by
+              <span itemscope itemprop="author" itemtype="https://schema.org/Author">
+                <span itemprop="name">$author$</span>
+              </span>
+            </p>
+          $endif$
+          $if(teaser)$
+            <p>$teaser$</p>
+            <a href="$url$"><button>Read more</button></a>
+          $else$
+            $if(body)$
+              <p itemprop="articleBody">$body$</p>
+              <a itemprop="url" href="$url$"><button>Read more</button></a>
+            $endif$
+          $endif$
+        </div>
+      </article>
+    </li>
   $endfor$
 </ul>
