@@ -2,4 +2,4 @@
 name: Matus Tejiscak
 ---
 
-Dependent types, compiling dependent types, erasure, structural recursion.
+Functional programming, dependent types, compiling dependent types, erasure, structural recursion.
