@@ -85,6 +85,7 @@ main = hakyll $ do
       compile $ pandocCompiler >>=
         saveSnapshot "content" >>=
         loadAndApplyTemplate "templates/post.html" ctx >>=
+        applyAsTemplate ctx >>=
         saveSnapshot "formatted" >>=
         loadAndApplyTemplate "templates/default.html" ctx >>=
         relativizeUrls
