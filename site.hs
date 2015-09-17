@@ -147,6 +147,11 @@ thumbContext = field "thumb" $ \item ->
   return . fromMaybe "recent-post.png" .
                      Map.lookup "thumb" =<< getMetadata (itemIdentifier item)
 
+postIcon :: String -> Context String
+postIcon f = field "posticon" $ \item -> do
+  metadata <- getMetadata (itemIdentifier item)
+  return $ fromMaybe f (Map.lookup "posticon" metadata)
+
 postDateContext = dateField "day" "%d" <>
                   dateField "shortmonth" "%b"
 postsFieldContext = mconcat
@@ -154,6 +159,7 @@ postsFieldContext = mconcat
   ,dateContext
   ,thumbContext
   ,teaserField "teaser" "content"
+  ,postIcon "newspaper.png"
   ,defaultContext]
 
 withPostsField fld c =
